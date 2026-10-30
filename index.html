@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#10171b"><title>Воин и Дракон · Парапет</title>
+  <link rel="stylesheet" href="/styles.css"><script type="module" src="/app.js"></script>
+</head>
+<body>
+  <main class="game" id="game">
+    <div class="landscape" aria-hidden="true"></div><div class="vignette" aria-hidden="true"></div>
+    <header><a class="brand" href="/" aria-label="На главный экран"><span class="sigil">✧</span> Воин <i>и</i> Дракон</a><span class="edition">ВИЗУАЛЬНАЯ НОВЕЛЛА <b>ПИЛОТ 01</b></span><button id="menu-button" class="quiet" hidden>Меню ☰</button></header>
+    <section id="home" class="home" aria-labelledby="title">
+      <p class="eyebrow">ГЛАВА ПЕРВАЯ · БАСГИАТ</p><h1 id="title">Парапет</h1><div class="gold-rule"></div>
+      <p class="intro">Один шаг отделяет тебя от новой жизни.<br>Кому ты доверишь следующий?</p>
+      <button id="start" class="primary" disabled>Загрузка истории…</button><button id="continue" class="continue" hidden>Продолжить историю <span>↗</span></button>
+      <p class="small">Выбор меняет отношения. Доверие меняет всё.</p>
+    </section>
+    <section id="play" class="play" hidden aria-label="История">
+      <div class="chapter"><span id="chapter-number"></span><span class="chapter-line"></span><span id="chapter-title"></span></div>
+      <aside class="character" id="character"><div class="character-orbit" aria-hidden="true"><span id="monogram">В</span></div><span id="character-name"></span><span id="emotion"></span></aside>
+      <div class="dialogue-panel">
+        <div class="panel-top"><span id="speaker"></span><span class="moment" id="moment">ПАРАПЕТ</span></div>
+        <p id="dialogue" aria-live="polite" aria-atomic="true"></p>
+        <div id="choices" class="choices" aria-label="Варианты ответа"></div>
+        <button id="next" class="next">Продолжить <span>↠</span></button>
+        <div class="panel-bottom"><span id="save-state">Прогресс сохраняется автоматически</span><span class="keyboard">ПРОБЕЛ / ENTER — ДАЛЬШЕ</span></div>
+      </div>
+      <nav class="toolbar" aria-label="Игровые инструменты"><button id="journal-button">≡ <span>Журнал</span></button><button id="stats-button">◇ <span>Характеристики</span></button><button id="save-button">↓ <span>Сохранить</span></button><button id="load-button">↑ <span>Загрузить</span></button></nav>
+    </section>
+    <section id="ending" class="ending" hidden><p class="eyebrow">КОНЕЦ ПИЛОТА</p><h1>Обе должны<br>быть здесь.</h1><p>Ты прошла Парапет.<br>Но чья история началась на другой стороне?</p><p id="ending-ally" class="ending-ally"></p><button id="restart" class="primary">Пройти другим путём ↗</button><button id="ending-journal" class="continue">Открыть журнал</button></section>
+    <footer id="footer"><span>РОМАНТИЧЕСКОЕ ФЭНТЕЗИ</span><span>ВНУТРЕННИЙ ПРОТОТИП · 0.1</span><span>СДЕЛАЙ ПЕРВЫЙ ШАГ ↗</span></footer>
+    <p id="notice" role="status" class="notice" hidden></p>
+  </main>
+  <dialog id="modal"><div class="modal-header"><h2 id="modal-title"></h2><button id="close-modal" aria-label="Закрыть">✕</button></div><div id="modal-body"></div></dialog>
+</body></html>
