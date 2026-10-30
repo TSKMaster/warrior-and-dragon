@@ -50,7 +50,7 @@ function render() {
   }
   show('play');
   const chapter = story.scenes.findIndex(scene => scene.ID === novel.scene.ID) + 1;
-  element('game').classList.toggle('interior', chapter >= 5);
+  element('game').classList.toggle('interior', chapter >= 4);
   element('chapter-number').textContent = `СЦЕНА ${String(chapter).padStart(2, '0')} / 08`;
   element('chapter-title').textContent = novel.scene.Название;
   element('moment').textContent = chapter >= 6 ? 'НИЖНИЙ ЛАЗАРЕТ' : 'БАСГИАТ';
