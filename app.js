@@ -5,13 +5,18 @@ const AUTO = 'warrior-dragon:auto:v1', MANUAL = 'warrior-dragon:manual:v1';
 let story, novel, noticeTimer;
 const read = key => { try { return localStorage.getItem(key); } catch { return null; } };
 const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+element('character-art').querySelector('img').addEventListener('load', () => element('character-art').classList.remove('portrait-loading'));
+element('character-art').querySelector('img').addEventListener('error', () => {
+  element('character-art').hidden = true;
+  element('play').classList.remove('has-portrait');
+});
 let motionEnabled = read('warrior-dragon:motion:v1') === 'on' || (read('warrior-dragon:motion:v1') !== 'off' && !motionPreference.matches);
 let motionStrength = Number(read('warrior-dragon:motion-strength:v1')) || 1;
 motionStrength = Math.max(.5, Math.min(3, motionStrength));
 function syncMotion() {
-  element('violet-art').classList.toggle('motion-off', !motionEnabled);
-  element('violet-art').classList.toggle('motion-paused', document.hidden || element('modal').open);
-  element('violet-art').style.setProperty('--motion', motionStrength);
+  element('character-art').classList.toggle('motion-off', !motionEnabled);
+  element('character-art').classList.toggle('motion-paused', document.hidden || element('modal').open);
+  element('character-art').style.setProperty('--motion', motionStrength);
 }
 document.addEventListener('visibilitychange', syncMotion);
 element('modal').addEventListener('close', syncMotion);
@@ -52,14 +57,24 @@ function render() {
   element('choices').replaceChildren();
   const line = novel.line;
   const narration = line?.Говорящий === 'Ремарка';
-  const showViolet = !line || line.Говорящий === 'Вайолет';
-  element('violet-art').hidden = !showViolet;
-  element('play').classList.toggle('has-violet', showViolet);
+  const portraitName = line?.Говорящий || 'Вайолет';
+  const portraitFile = { Вайолет: 'violet-v1.png', Ксейден: 'xaden-v1.png' }[portraitName];
+  const showPortrait = Boolean(portraitFile);
+  const art = element('character-art');
+  art.hidden = !showPortrait;
+  element('play').classList.toggle('has-portrait', showPortrait);
+  if (showPortrait && art.dataset.character !== portraitName) {
+    art.classList.add('portrait-loading');
+    art.dataset.character = portraitName;
+    for (const image of art.querySelectorAll('img')) image.src = new URL(`./assets/characters/${portraitFile}`, import.meta.url).href;
+    art.querySelector('img').alt = portraitName === 'Ксейден' ? 'Ксейден: чёрные волосы, янтарно-карие глаза, тёмные знаки на шее, кожаная военная одежда' : 'Вайолет: тёмная коса с серебряным концом, чёрный кожаный корсаж';
+    if (art.querySelector('img').complete && art.querySelector('img').naturalWidth) art.classList.remove('portrait-loading');
+  }
   element('play').classList.toggle('narration', narration);
-  element('character').style.visibility = showViolet || (line && !narration) ? 'visible' : 'hidden';
+  element('character').style.visibility = showPortrait || (line && !narration) ? 'visible' : 'hidden';
   element('speaker').textContent = line ? (narration ? 'История' : line.Говорящий) : 'Как ты поступишь?';
   element('dialogue').textContent = line ? line.Текст : 'Твоё решение останется с тобой.';
-  element('character-name').textContent = showViolet ? 'Вайолет' : line?.Говорящий || '';
+  element('character-name').textContent = showPortrait ? portraitName : line?.Говорящий || '';
   element('monogram').textContent = line?.Говорящий.slice(0, 1) || '';
   element('emotion').textContent = line?.Эмоция || '';
   element('next').hidden = !line;
