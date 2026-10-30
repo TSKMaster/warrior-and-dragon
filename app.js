@@ -115,7 +115,7 @@ document.addEventListener('keydown', event => {
   event.preventDefault(); element('next').click();
 });
 try {
-  const response = await fetch('/story/pilot.json');
+  const response = await fetch(new URL('./story/pilot.json', import.meta.url));
   if (!response.ok) throw new Error('История недоступна');
   story = await response.json();
   new Novel(story);
