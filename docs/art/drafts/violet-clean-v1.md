@@ -1,6 +1,6 @@
 # Вайолет: чистый портрет, проба 1
 
-Статус: черновик для проверки, не новый эталон и не готовый послойный персонаж. Исходный одобренный образ сохранён без изменений в `../references/violet-approved-v1.png`.
+Статус: пользователь одобрил портрет и пробу движения; копия подключена к игре как `assets/characters/violet-v1.png`. Это ещё не полноценный послойный персонаж. Исходный одобренный образ сохранён без изменений в `../references/violet-approved-v1.png`.
 
 Файл: `violet-clean-v1.png`, 1024 × 1536, RGBA. Получен встроенным генератором изображений с одобренным кадром как визуальным референсом. Краткое содержание запроса: identity-preserving extraction of the approved adult Violet, preserve face, grey-violet eyes, dark braid with silver end, opaque fitted black leather corset, round pendant and wet cloak; remove scenery, UI and text; centered portrait from crown to mid thigh on a transparent background, same light and proportions.
 

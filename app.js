@@ -4,6 +4,21 @@ const element = id => document.getElementById(id);
 const AUTO = 'warrior-dragon:auto:v1', MANUAL = 'warrior-dragon:manual:v1';
 let story, novel, noticeTimer;
 const read = key => { try { return localStorage.getItem(key); } catch { return null; } };
+const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+let motionEnabled = read('warrior-dragon:motion:v1') === 'on' || (read('warrior-dragon:motion:v1') !== 'off' && !motionPreference.matches);
+let motionStrength = Number(read('warrior-dragon:motion-strength:v1')) || 1;
+motionStrength = Math.max(.5, Math.min(3, motionStrength));
+function syncMotion() {
+  element('violet-art').classList.toggle('motion-off', !motionEnabled);
+  element('violet-art').classList.toggle('motion-paused', document.hidden || element('modal').open);
+  element('violet-art').style.setProperty('--motion', motionStrength);
+}
+document.addEventListener('visibilitychange', syncMotion);
+element('modal').addEventListener('close', syncMotion);
+motionPreference.addEventListener('change', () => {
+  if (!read('warrior-dragon:motion:v1')) motionEnabled = !motionPreference.matches;
+  syncMotion();
+});
 function notify(message) {
   element('notice').textContent = message;
   element('notice').hidden = false;
@@ -20,6 +35,7 @@ function show(view) {
   element('footer').hidden = view === 'play';
   element('game').classList.toggle('ending-mode', view === 'ending');
   if (view === 'home') element('game').classList.remove('interior');
+  syncMotion();
 }
 function render() {
   if (novel.ended) {
@@ -36,11 +52,14 @@ function render() {
   element('choices').replaceChildren();
   const line = novel.line;
   const narration = line?.Говорящий === 'Ремарка';
+  const showViolet = !line || line.Говорящий === 'Вайолет';
+  element('violet-art').hidden = !showViolet;
+  element('play').classList.toggle('has-violet', showViolet);
   element('play').classList.toggle('narration', narration);
-  element('character').style.visibility = line && !narration ? 'visible' : 'hidden';
+  element('character').style.visibility = showViolet || (line && !narration) ? 'visible' : 'hidden';
   element('speaker').textContent = line ? (narration ? 'История' : line.Говорящий) : 'Как ты поступишь?';
   element('dialogue').textContent = line ? line.Текст : 'Твоё решение останется с тобой.';
-  element('character-name').textContent = line?.Говорящий || '';
+  element('character-name').textContent = showViolet ? 'Вайолет' : line?.Говорящий || '';
   element('monogram').textContent = line?.Говорящий.slice(0, 1) || '';
   element('emotion').textContent = line?.Эмоция || '';
   element('next').hidden = !line;
@@ -74,6 +93,7 @@ function openModal(title) {
   element('modal-body').className = '';
   element('modal-body').replaceChildren();
   if (!element('modal').open) element('modal').showModal();
+  syncMotion();
   return element('modal-body');
 }
 function journal() {
@@ -104,6 +124,24 @@ element('stats-button').addEventListener('click', () => {
 });
 element('menu-button').addEventListener('click', () => {
   const body = openModal('Воин и Дракон'); body.className = 'modal-actions';
+  const motionButton = document.createElement('button');
+  motionButton.textContent = `Анимация персонажей: ${motionEnabled ? 'включена' : 'выключена'}`;
+  motionButton.setAttribute('aria-pressed', String(motionEnabled));
+  motionButton.addEventListener('click', () => {
+    motionEnabled = !motionEnabled;
+    try { localStorage.setItem('warrior-dragon:motion:v1', motionEnabled ? 'on' : 'off'); } catch {}
+    motionButton.textContent = `Анимация персонажей: ${motionEnabled ? 'включена' : 'выключена'}`;
+    motionButton.setAttribute('aria-pressed', String(motionEnabled)); syncMotion();
+  });
+  const motionLabel = document.createElement('label'); motionLabel.className = 'motion-setting';
+  const motionText = document.createElement('span'); motionText.textContent = `Сила движения: ${motionStrength}×`;
+  const motionInput = document.createElement('input'); motionInput.type = 'range'; motionInput.min = '.5'; motionInput.max = '3'; motionInput.step = '.25'; motionInput.value = String(motionStrength);
+  motionInput.addEventListener('input', () => {
+    motionStrength = Number(motionInput.value); motionText.textContent = `Сила движения: ${motionStrength}×`;
+    try { localStorage.setItem('warrior-dragon:motion-strength:v1', String(motionStrength)); } catch {}
+    syncMotion();
+  });
+  motionLabel.append(motionText, motionInput); body.append(motionButton, motionLabel);
   for (const [label, action] of [['Вернуться к истории', () => {}], ['На главный экран', () => { element('continue').hidden = !read(AUTO); show('home'); }]]) {
     const button = document.createElement('button'); button.textContent = label;
     button.addEventListener('click', () => { element('modal').close(); action(); }); body.append(button);
