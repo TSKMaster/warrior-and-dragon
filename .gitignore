@@ -1,6 +1,7 @@
 node_modules/
 outputs/
 dist/
+tools-local/
 .env
 .env.*
 !.env.example
