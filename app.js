@@ -58,7 +58,7 @@ function render() {
   const line = novel.line;
   const narration = line?.Говорящий === 'Ремарка';
   const portraitName = line?.Говорящий || 'Вайолет';
-  const portraitFile = { Вайолет: 'violet-v1.png', Ксейден: 'xaden-v1.png' }[portraitName];
+  const portraitFile = { Вайолет: 'violet-v1.png', Ксейден: 'xaden-v1.png', Дейн: 'dain-v1.png' }[portraitName];
   const showPortrait = Boolean(portraitFile);
   const art = element('character-art');
   art.hidden = !showPortrait;
@@ -67,7 +67,11 @@ function render() {
     art.classList.add('portrait-loading');
     art.dataset.character = portraitName;
     for (const image of art.querySelectorAll('img')) image.src = new URL(`./assets/characters/${portraitFile}`, import.meta.url).href;
-    art.querySelector('img').alt = portraitName === 'Ксейден' ? 'Ксейден: чёрные волосы, янтарно-карие глаза, тёмные знаки на шее, кожаная военная одежда' : 'Вайолет: тёмная коса с серебряным концом, чёрный кожаный корсаж';
+    art.querySelector('img').alt = {
+      Вайолет: 'Вайолет: тёмная коса с серебряным концом, чёрный кожаный корсаж',
+      Ксейден: 'Ксейден: чёрные волосы, янтарно-карие глаза, тёмные знаки на шее, кожаная военная одежда',
+      Дейн: 'Дейн: короткие каштановые волосы, орехово-карие глаза, чёрная кожаная военная форма с высоким воротником'
+    }[portraitName];
     if (art.querySelector('img').complete && art.querySelector('img').naturalWidth) art.classList.remove('portrait-loading');
   }
   element('play').classList.toggle('narration', narration);
